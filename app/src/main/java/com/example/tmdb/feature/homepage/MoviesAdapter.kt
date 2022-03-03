@@ -1,4 +1,4 @@
-package com.example.tmdb
+package com.example.tmdb.feature.homepage
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,9 +7,12 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.example.tmdb.R
+import com.example.tmdb.feature.homepage.model.Movie
 
 class MoviesAdapter(
-    private var movies: MutableList<Movie>,
+    private val pagingListener: PagingListener,
+    private var movies: List<Movie>,
     private val onMovieClick: (movie: Movie) -> Unit
 ) : RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>() {
 
@@ -24,15 +27,18 @@ class MoviesAdapter(
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         holder.bind(movies[position])
+        if (position == movies.size - 2) {
+            pagingListener.loadMore()
+        }
     }
 
     fun appendMovies(movies: List<Movie>) {
-        this.movies.addAll(movies)
-        notifyItemRangeInserted(
-            this.movies.size,
-            movies.size - 1
-        )
+        this.movies = movies
         notifyDataSetChanged()
+    }
+
+    interface PagingListener {
+        fun loadMore()
     }
 
     inner class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
