@@ -1,6 +1,5 @@
 package com.example.tmdb.feature.homepage.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,6 +13,15 @@ class HomeViewModel(private val movieRepository: MoviesRepository) : ViewModel()
     private val _popularMoviesData = MutableLiveData<List<Movie>>()
     val popularMoviesLiveData: LiveData<List<Movie>> = _popularMoviesData
     private var pageCount = 1
+    private var pageCountTop = 1
+    private var pageCountUpcoming = 1
+
+    private val _topRated= MutableLiveData<List<Movie>>()
+    val topRatedLiveData:LiveData<List<Movie>> = _topRated
+
+    private val _upcomingMovies = MutableLiveData<List<Movie>>()
+    val upcomingLiveData:LiveData<List<Movie>> = _upcomingMovies
+
 
     fun getPopularMovies(page: Int = 1) {
         GlobalScope.launch {
@@ -32,8 +40,55 @@ class HomeViewModel(private val movieRepository: MoviesRepository) : ViewModel()
         }
     }
 
+    fun topRatedMovies(page: Int = 1) {
+        GlobalScope.launch {
+            val response = movieRepository.getTopRatedMovies1(page)
+            val newMovieList: List<Movie>? = response.body()?.movies
+            val finalMovieList = if (page == 1) {
+                newMovieList
+            } else {
+                val currentList = (topRatedLiveData.value ?: emptyList()) as MutableList<Movie>
+                if (newMovieList != null) {
+                    currentList.addAll(newMovieList)
+                }
+                currentList
+            }
+            _topRated.postValue(finalMovieList)
+        }
+    }
+
+
+    fun upcomingMovies(page: Int = 1) {
+        GlobalScope.launch {
+            val response = movieRepository.getUpcomingMovies1(page)
+            val newMovieList: List<Movie>? = response.body()?.movies
+            val finalMovieList = if (page == 1) {
+                newMovieList
+            } else {
+                val currentList = (upcomingLiveData.value ?: emptyList()) as MutableList<Movie>
+                if (newMovieList != null) {
+                    currentList.addAll(newMovieList)
+                }
+                currentList
+            }
+            _upcomingMovies.postValue(finalMovieList)
+        }
+    }
+
     fun loadMore() {
         pageCount += 1
         getPopularMovies(pageCount)
     }
+
+    fun loadTopRatedMore() {
+        pageCountTop +=1
+        topRatedMovies(pageCountTop)
+
+    }
+
+    fun loadUpcomingMore() {
+        pageCountUpcoming +=1
+        upcomingMovies(pageCountUpcoming)
+    }
+
 }

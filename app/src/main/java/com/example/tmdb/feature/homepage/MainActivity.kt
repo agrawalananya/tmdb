@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         popularMoviesAdapter = MoviesAdapter(
             object : MoviesAdapter.PagingListener {
                 override fun loadMore() {
-                    homeViewModel.loadMore()
+                        homeViewModel.loadMore()
                 }
             },
             emptyList()
@@ -62,32 +62,50 @@ class MainActivity : AppCompatActivity() {
             popularMoviesAdapter.appendMovies(it)
         }
 
-//        topRatedMovies = findViewById(R.id.top_rated_movies)
-//        topRatedMoviesLayoutMgr = LinearLayoutManager(
-//            this,
-//            LinearLayoutManager.HORIZONTAL,
-//            false
-//        )
-//        topRatedMovies.layoutManager = topRatedMoviesLayoutMgr
-//        topRatedMoviesAdapter = MoviesAdapter(
-//            object : MoviesAdapter.PagingListener {
-//                override fun loadMore() {
-//                    homeViewModel.loadMore()
-//                }
-//            },
-//            mutableListOf()
-//        ) { movie -> showMovieDetails(movie) }
-//        topRatedMovies.adapter = topRatedMoviesAdapter
-//
-//        upcomingMovies = findViewById(R.id.upcoming_movies)
-//        upcomingMoviesLayoutMgr = LinearLayoutManager(
-//            this,
-//            LinearLayoutManager.HORIZONTAL,
-//            false
-//        )
-//        upcomingMovies.layoutManager = upcomingMoviesLayoutMgr
-//        upcomingMoviesAdapter = MoviesAdapter(mutableListOf()) { movie -> showMovieDetails(movie) }
-//        upcomingMovies.adapter = upcomingMoviesAdapter
+
+
+        topRatedMovies = findViewById(R.id.top_rated_movies)
+        topRatedMoviesLayoutMgr = LinearLayoutManager(
+            this,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        topRatedMovies.layoutManager = topRatedMoviesLayoutMgr
+        topRatedMoviesAdapter = MoviesAdapter(
+            object : MoviesAdapter.PagingListener {
+                override fun loadMore() {
+                    homeViewModel.loadTopRatedMore()
+                }
+            },
+            mutableListOf()
+        ) { movie -> showMovieDetails(movie) }
+        topRatedMovies.adapter = topRatedMoviesAdapter
+
+        homeViewModel.topRatedMovies()
+        homeViewModel.topRatedLiveData.observe(this) {
+            topRatedMoviesAdapter.appendMovies(it)
+        }
+
+        upcomingMovies = findViewById(R.id.upcoming_movies)
+        upcomingMoviesLayoutMgr = LinearLayoutManager(
+            this,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        upcomingMovies.layoutManager = upcomingMoviesLayoutMgr
+        upcomingMoviesAdapter = MoviesAdapter(
+            object:MoviesAdapter.PagingListener{
+                override fun loadMore() {
+                    homeViewModel.loadUpcomingMore()
+                }
+            },
+            emptyList()
+        ){movie -> showMovieDetails(movie)}
+        upcomingMovies.adapter = upcomingMoviesAdapter
+        homeViewModel.upcomingMovies()
+        homeViewModel.upcomingLiveData.observe(this) {
+            upcomingMoviesAdapter.appendMovies(it)
+        }
     }
 
     private fun showMovieDetails(movie: Movie) {
