@@ -1,10 +1,9 @@
-package com.example.tmdb.data
+package com.example.tmdb.data.movies
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-
 
 @Dao
 interface MovieDao {
@@ -19,9 +18,5 @@ interface MovieDao {
     fun getMovies(): LiveData<List<MovieEntity>>
 
     @Query("Select Exists(Select * from MovieDetails where id= :id)")
-    fun isMovieExist(id:Long) : Boolean
-
-
-
-
+    fun isMovieExist(id: Long): Boolean
 }

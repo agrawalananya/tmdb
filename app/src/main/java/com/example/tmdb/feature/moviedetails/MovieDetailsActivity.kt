@@ -1,25 +1,25 @@
-package com.example.tmdb
+package com.example.tmdb.feature.moviedetails
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.*
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.RatingBar
+import android.widget.Toast
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.example.tmdb.data.MovieDatabase
-import com.example.tmdb.data.MovieEntity
-import kotlinx.coroutines.*
-
-const val MOVIE_BACKDROP = "extra_movie_backdrop"
-const val MOVIE_POSTER = "extra_movie_poster"
-const val MOVIE_TITLE = "extra_movie_title"
-const val MOVIE_RATING = "extra_movie_rating"
-const val MOVIE_RELEASE_DATE = "extra_movie_release_date"
-const val MOVIE_OVERVIEW = "extra_movie_overview"
-const val MOVIE_ID = "extra_movie_id"
+import com.example.tmdb.R
+import com.example.tmdb.data.movies.MovieDatabase
+import com.example.tmdb.data.movies.MovieEntity
+import com.example.tmdb.feature.homepage.MainActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var backdrop: ImageView
@@ -34,7 +34,6 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     private var movieIsLiked: Boolean = false
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_details)
@@ -48,7 +47,6 @@ class MovieDetailsActivity : AppCompatActivity() {
         favouriteBtn = findViewById(R.id.button)
         if (extras != null) {
             populateDetails(extras)
-
         } else {
             finish()
         }
@@ -59,7 +57,7 @@ class MovieDetailsActivity : AppCompatActivity() {
             movieIsLiked = !movieIsLiked
             Toast.makeText(applicationContext, "$movieIsLiked", Toast.LENGTH_SHORT).show()
             if (movieIsLiked) {
-                GlobalScope.launch {
+                lifecycleScope.launch {
                     database.movieDao().insertMovie(
                         MovieEntity(
                             movieId,
@@ -69,7 +67,7 @@ class MovieDetailsActivity : AppCompatActivity() {
                     )
                 }
             } else {
-                GlobalScope.launch {
+                lifecycleScope.launch {
                     database.movieDao()
                         .deleteByMovieTitle(
                             intent.getStringExtra("MOVIE_TITLE").toString()
@@ -78,12 +76,7 @@ class MovieDetailsActivity : AppCompatActivity() {
             }
             updateFavouriteIconColor(movieIsLiked)
         }
-
-
-
-
     }
-
 
     private fun checkLikeButtonState() {
 //        database.movieDao().getMovies().observe(
@@ -100,15 +93,13 @@ class MovieDetailsActivity : AppCompatActivity() {
 //            }
 //        )
 
-        GlobalScope.launch {
+        lifecycleScope.launch {
             val isMovieExist = database.movieDao().isMovieExist(movieId)
-            Log.d("kkk","is Movie Exist : $isMovieExist")
-            withContext(Dispatchers.Main)
-            {
+            Log.d("kkk", "is Movie Exist : $isMovieExist")
+            withContext(Dispatchers.Main) {
                 updateFavouriteIconColor(isMovieExist)
             }
         }
-
     }
 
     private fun setDBInstance() {
@@ -136,28 +127,25 @@ class MovieDetailsActivity : AppCompatActivity() {
         }
     }
 
-
     private fun populateDetails(extras: Bundle) {
-        extras.getString(MOVIE_BACKDROP)?.let { backdropPath ->
+        extras.getString(MainActivity.MOVIE_BACKDROP)?.let { backdropPath ->
             Glide.with(this)
                 .load("https://image.tmdb.org/t/p/w1280$backdropPath")
                 .transform(CenterCrop())
                 .into(backdrop)
         }
 
-        extras.getString(MOVIE_POSTER)?.let { posterPath ->
+        extras.getString(MainActivity.MOVIE_POSTER)?.let { posterPath ->
             Glide.with(this)
                 .load("https://image.tmdb.org/t/p/w342$posterPath")
                 .transform(CenterCrop())
                 .into(poster)
         }
 
-        title.text = extras.getString(MOVIE_TITLE, "")
-        rating.rating = extras.getFloat(MOVIE_RATING, 0f) / 2
-        releaseDate.text = extras.getString(MOVIE_RELEASE_DATE, "")
-        overview.text = extras.getString(MOVIE_OVERVIEW, "")
-        movieId = extras.getLong(MOVIE_ID,0)
-
+        title.text = extras.getString(MainActivity.MOVIE_TITLE, "")
+        rating.rating = extras.getFloat(MainActivity.MOVIE_RATING, 0f) / 2
+        releaseDate.text = extras.getString(MainActivity.MOVIE_RELEASE_DATE, "")
+        overview.text = extras.getString(MainActivity.MOVIE_OVERVIEW, "")
+        movieId = extras.getLong(MainActivity.MOVIE_ID, 0)
     }
-
 }
