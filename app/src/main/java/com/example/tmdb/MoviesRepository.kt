@@ -1,5 +1,6 @@
 package com.example.tmdb
 
+import com.example.tmdb.data.MovieDao
 import com.example.tmdb.feature.homepage.model.GetMoviesResponse
 import com.example.tmdb.feature.homepage.model.Movie
 import retrofit2.Call
@@ -7,19 +8,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
-class MoviesRepository {
-
-    private val api: Api
-
-    init {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.themoviedb.org/3/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        api = retrofit.create(Api::class.java)
-    }
+class MoviesRepository @Inject constructor(
+    private val api: Api,
+    private val movieDao: MovieDao
+) {
 
     suspend fun getPopularMovies1(page: Int) =
         api.getPopularMovies(page = page)

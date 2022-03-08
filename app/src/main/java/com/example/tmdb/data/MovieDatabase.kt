@@ -9,26 +9,4 @@ import androidx.room.RoomDatabase
 abstract class MovieDatabase: RoomDatabase(){
 
     abstract fun movieDao(): MovieDao
-
-    object DatabaseBuilder {
-
-        private var INSTANCE: MovieDatabase? = null
-
-        fun getInstance(context: Context): MovieDatabase {
-            if (INSTANCE == null) {
-                synchronized(MovieDatabase::class) {
-                    INSTANCE = buildRoomDB(context)
-                }
-            }
-            return INSTANCE!!
-        }
-
-        private fun buildRoomDB(context: Context) =
-            Room.databaseBuilder(
-                context.applicationContext,
-                MovieDatabase::class.java,
-                "Room-DB-coroutines"
-            ).build()
-
-    }
 }

@@ -3,12 +3,18 @@ package com.example.tmdb.feature.homepage.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.tmdb.MoviesRepository
 import com.example.tmdb.feature.homepage.model.Movie
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel(private val movieRepository: MoviesRepository) : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val movieRepository: MoviesRepository
+) : ViewModel() {
 
     private val _popularMoviesData = MutableLiveData<List<Movie>>()
     val popularMoviesLiveData: LiveData<List<Movie>> = _popularMoviesData
@@ -24,7 +30,7 @@ class HomeViewModel(private val movieRepository: MoviesRepository) : ViewModel()
 
 
     fun getPopularMovies(page: Int = 1) {
-        GlobalScope.launch {
+        viewModelScope.launch {
             val response = movieRepository.getPopularMovies1(page)
             val newMovieList: List<Movie>? = response.body()?.movies
             val finalMovieList = if (page == 1) {
@@ -41,7 +47,7 @@ class HomeViewModel(private val movieRepository: MoviesRepository) : ViewModel()
     }
 
     fun topRatedMovies(page: Int = 1) {
-        GlobalScope.launch {
+        viewModelScope.launch {
             val response = movieRepository.getTopRatedMovies1(page)
             val newMovieList: List<Movie>? = response.body()?.movies
             val finalMovieList = if (page == 1) {
