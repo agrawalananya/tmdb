@@ -1,4 +1,4 @@
-package com.example.tmdb
+package com.example.tmdb.data.network
 
 import com.example.tmdb.feature.homepage.model.GetMoviesResponse
 import retrofit2.Response

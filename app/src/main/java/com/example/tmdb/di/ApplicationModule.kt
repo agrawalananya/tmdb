@@ -2,8 +2,8 @@ package com.example.tmdb.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.tmdb.Api
-import com.example.tmdb.data.MovieDatabase
+import com.example.tmdb.data.network.Api
+import com.example.tmdb.data.movies.MovieDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,5 +39,4 @@ object ApplicationModule {
     @Provides
     @Singleton
     fun provideMovieDao(movieDb: MovieDatabase) = movieDb.movieDao()
-
 }

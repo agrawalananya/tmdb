@@ -1,28 +1,20 @@
-package com.example.tmdb
+package com.example.tmdb.data.source
 
-import com.example.tmdb.data.MovieDao
-import com.example.tmdb.feature.homepage.model.GetMoviesResponse
-import com.example.tmdb.feature.homepage.model.Movie
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.tmdb.data.network.Api
 import javax.inject.Inject
 
 class MoviesRepository @Inject constructor(
     private val api: Api,
-    private val movieDao: MovieDao
-) {
+
+    ) {
 
     suspend fun getPopularMovies1(page: Int) =
         api.getPopularMovies(page = page)
 
-
-    suspend fun getTopRatedMovies1(page:Int)=
+    suspend fun getTopRatedMovies1(page: Int) =
         api.getTopRatedMovies(page = page)
 
-    suspend fun getUpcomingMovies1(page:Int)=
+    suspend fun getUpcomingMovies1(page: Int) =
         api.getUpcomingMovies(page = page)
 
 //    fun getPopularMovies(
